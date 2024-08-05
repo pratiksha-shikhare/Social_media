@@ -13,7 +13,12 @@ from .models import Profile
 # Create your views here.
 @login_required(login_url='signin')
 def index(request):
-    return render(request, 'index.html')
+    user_object = User.objects.get(username=request.user.username)
+    user_profile = Profile.objects.get(user= user_object)
+    return render(request, 'index.html', {"user_profile":user_profile})
+
+def upload(request):
+    return HttpResponse("upload view")
 
 @login_required(login_url='signin')
 def settings(request):
