@@ -208,7 +208,7 @@
                                 <div class="flex flex-1 items-center space-x-4">
                                     <a href="#">
                                         <div class="bg-gradient-to-tr from-yellow-600 to-pink-600 p-0.5 rounded-full">  
-                                            <img src="{% static 'assets/images/avatars/avatar-2.jpg' %}" class="bg-gray-200 border border-white rounded-full w-8 h-8">
+                                            <img src="{{user_profile.profileimg.url}}" class="bg-gray-200 border border-white rounded-full w-8 h-8">
                                         </div>
                                     </a>
                                     <span class="block capitalize font-semibold "><a href="/profile/{{post.user}}">{{post.user}}</a></span>
@@ -252,11 +252,26 @@
                               </div>
                             </div>
     
-                            <div uk-lightbox>
+                            {% comment %} <div uk-lightbox>
                                 <a href="{{post.image.url}}">  
-                                    <img src="{{post.image.url}}" alt="">
+                                    <img src="{{post.image.url}}" width="100%" height="" alt="no image">
+                                </a>
+                            </div> {% endcomment %}
+
+                            <div uk-lightbox>
+                                <a href="{{post.image.url}}" class="d-block">
+                                    <img src="{{post.image.url}}" class="img-fluid rounded mx-auto d-block custom-img" alt="Image">
                                 </a>
                             </div>
+                            
+                            <style>
+                                .custom-img {
+                                    max-width: 100%; 
+                                    max-height: 500px;
+                                    min-height: 300px;
+                                    object-fit: cover;
+                                }
+                            </style>
                             
     
                             <div class="py-3 px-4 space-y-3"> 
