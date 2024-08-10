@@ -54,7 +54,8 @@ def index(request):
         
     suggestion_username_profile_list = list(chain(*username_profile_list))
     
-    return render(request, 'index.html', {"user_profile": user_profile, "posts": feed_list, "suggestion_username_profile_list": suggestion_username_profile_list})
+    return render(request, 'index.html', {"user_profile": user_profile, "posts": posts, "suggestion_username_profile_list": suggestion_username_profile_list})
+    # return render(request, 'index.html', {"user_profile": user_profile, "posts": feed_list, "suggestion_username_profile_list": suggestion_username_profile_list})
 
 def upload(request):
     if request.method == "POST":
