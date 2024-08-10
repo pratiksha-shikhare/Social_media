@@ -2,7 +2,7 @@
 # from django.contrib import messages, auth
 # from django.shortcuts import redirect, render
 from datetime import datetime
-from .models import Profile
+from .models import LikePost, Profile
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
@@ -16,7 +16,8 @@ from .models import Profile, Post
 def index(request):
     user_object = User.objects.get(username=request.user.username)
     user_profile = Profile.objects.get(user= user_object)
-    return render(request, 'index.html', {"user_profile":user_profile})
+    posts = Post.objects.all()
+    return render(request, 'index.html', {"user_profile":user_profile, "posts":posts})
 
 def upload(request):
     if request.method == "POST":
@@ -24,12 +25,41 @@ def upload(request):
         image = request.FILES.get("image_upload")
         caption = request.POST.get("caption")
         
-        new_post = Post.objects.create(user=user, image=image, caption=caption, created_at=datetime.now)
+        new_post = Post.objects.create(user=user, image=image, caption=caption)
         new_post.save()
-        
+        return redirect("/")
     else:
         return redirect("/")
-    return HttpResponse("upload view")
+
+@login_required(login_url='signin')
+def like_post(request):
+    username = request.user.username
+    post_id = request.GET.get('post_id')
+    
+    post = Post.objects.get(id=post_id)
+    
+    like_filter = LikePost.objects.filter(post_id=post_id, username=username).first()
+    if like_filter == None:
+        new_like = LikePost.objects.create(post_id=post_id, username=username)
+        new_like.save()
+        post.no_of_likes = post.no_of_likes+1
+        post.save()
+        return redirect("/")    
+    else:
+        like_filter.delete()
+        post.no_of_likes = post.no_of_likes-1
+        post.save()
+        return redirect("/")
+    
+@login_required(login_url='signin')
+def profile(request, pk):
+    user_object = User.objects.get(username=pk)
+    user_profile = Profile.objects.get(user=user_object)
+    user_posts = Post.objects.filter(user=pk)
+    user_post_length = len(user_posts)
+    
+    return render(request, "profile.html", {"user_profile":user_profile, "user_object":user_object, "user_posts":user_posts, "user_post_length":user_post_length})
+
 
 @login_required(login_url='signin')
 def settings(request):
